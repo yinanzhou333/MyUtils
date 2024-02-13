@@ -1,0 +1,88 @@
+#!/home/yz/myUtils/venv/bin/python3
+
+import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+url = "https://www.bilibili.com/video/BV1jD4y147dZ/?spm_id_from=333.999.0.0"
+
+driver = webdriver.Chrome()
+
+
+# Open the URL in Chrome
+driver.get(url)
+time.sleep(2)
+
+try:
+    control_wrap = WebDriverWait(driver, 10).until(
+        EC.visibility_of_element_located((By.CLASS_NAME, 'bpx-player-control-wrap'))
+    )
+
+    # Hover over the control_wrap region
+    ActionChains(driver).move_to_element(control_wrap).perform()
+
+    # Wait for the mute button to be clickable
+    mute_button = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.CLASS_NAME, 'bpx-player-ctrl-volume'))
+    )
+
+    # Click the mute button
+    mute_button.click()
+    '''
+    fullscreen_button = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, '.bpx-player-ctrl-full'))
+    )
+    # Click the full screen button
+    fullscreen_button.click()
+    '''
+    # Hover over other region
+    player_wrap = WebDriverWait(driver, 10).until(
+        EC.visibility_of_element_located((By.CLASS_NAME, 'player-wrap'))
+    )
+    ActionChains(driver).move_to_element(player_wrap).perform()
+
+except Exception as e:
+    print(f"Failed to click the mute button: {e}")
+
+try:
+    button = WebDriverWait(driver, 90).until(
+        EC.element_to_be_clickable((By.CLASS_NAME, 'bili-mini-close-icon'))
+    )
+    
+    # Click the button
+    button.click()
+except NoSuchElementException:
+    print("Button not found or not clickable within the specified time.")
+
+
+try:
+    control_wrap = WebDriverWait(driver, 10).until(
+        EC.visibility_of_element_located((By.CLASS_NAME, 'bpx-player-control-wrap'))
+    )
+    # Hover over the control_wrap region
+    ActionChains(driver).move_to_element(control_wrap).perform()
+    
+    play_button = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, '.bpx-player-ctrl-play'))
+    )
+    # Click the full screen button
+    play_button.click()    
+
+    fullscreen_button = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, '.bpx-player-ctrl-full'))
+    )
+    # Click the full screen button
+    fullscreen_button.click()
+except Exception as e:
+    print(f"Failed to click the full screen button: {e}")
+
+
+# Wait for user input before closing the browser
+input("Press Enter to close the browser...")
+
+# Close the browser window
+driver.quit()
+
